@@ -6,14 +6,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "dockerhub"
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build Docker Image') {
+    stage('Build Docker Image') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE)
