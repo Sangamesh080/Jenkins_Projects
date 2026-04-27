@@ -6,6 +6,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "dockerhub"
     }
 
+stages {
     stage('Build Docker Image') {
             steps {
                 script {
@@ -30,6 +31,7 @@ pipeline {
                 }             
             }
         }
+    }
 
     post {
     always {
