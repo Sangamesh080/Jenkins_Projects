@@ -2,14 +2,19 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = "$docker_cred"
+        REGISTRY_REPO    = 'sangamesh080/pyapp1'
+        CREDENTIALS_ID   = 'docker_cred'
+        IMAGE_TAG        = "${env.BUILD_NUMBER}"
     }
 
 stages {
     stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t sangamesh080/pyapp1 .'
+                      // Builds the image and tags it with the Jenkins build number
+                    sh "docker build -t ${REGISTRY_REPO}:${IMAGE_TAG} ."
+                    // Optional: Tag as latest for tracking production release
+                    sh "docker build -t ${REGISTRY_REPO}:latest ."
                 }
             }
         }
@@ -17,8 +22,14 @@ stages {
        stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('',DOCKERHUB_CREDENTIALS) {
-                        sh 'docker push sangamesh080/pyapp1:01'
+                     withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        // Log in to Docker Hub via standard input
+                        sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                        
+                        // Push both the build-numbered tag and the latest tag
+                        sh "docker push ${REGISTRY_REPO}:${IMAGE_TAG}"
+                        sh "docker push ${REGISTRY_REPO}:latest"
                     }
                 }             
             }
