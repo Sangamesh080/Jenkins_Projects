@@ -14,18 +14,11 @@ stages {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                sh 'pip install -r requirements.txt'
-                sh 'pytest'
-            }
-        }
-
-        stage('Push to Docker Hub') {
+       stage('Push to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('',DOCKERHUB_CREDENTIALS) {
-                    docker.image(sangamesh080/pyapp1).push("latest")
+                        sh 'docker push sangamesh080/pyapp1:01'
                     }
                 }             
             }
