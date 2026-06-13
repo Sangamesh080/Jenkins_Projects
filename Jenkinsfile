@@ -2,15 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "python-app"
-        DOCKERHUB_CREDENTIALS = "dockerhub"
+        DOCKERHUB_CREDENTIALS = "$docker_cred"
     }
 
 stages {
     stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    sh 'docker build -t sangamesh080/pyapp1 .'
                 }
             }
         }
@@ -26,7 +25,7 @@ stages {
             steps {
                 script {
                     docker.withRegistry('',DOCKERHUB_CREDENTIALS) {
-                    docker.image(DOCKER_IMAGE).push("latest")
+                    docker.image(sangamesh080/pyapp1).push("latest")
                     }
                 }             
             }
